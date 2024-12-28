@@ -28,7 +28,7 @@ uses cthreads, ptcCrt, ptcGraph;
 const
 	DeathColor = $10;
     LifeColor = $2F;
-    DeathChance = 8;
+    ChanceToDie = 8;
     {$IFDEF StatGrowth}
     SourcesCount = 16;
     CyclesMax = 16;
@@ -170,9 +170,9 @@ begin
 end;
 
 function CountNeighbors(var screen: map; i: longword): byte;
-	{ This function counts how many DeathColor cells are nearby }
+    { This function counts how many DeathColor cells are nearby }
 var
-	countme: byte;
+    countme: byte;
 begin
     { Do not forget to initialize }
     countme := 0;
@@ -204,9 +204,9 @@ var
 begin
     if screen[i] > DeathColor then
     begin
-        { this choose is the main feature of lichen }
-        ChangeOrNot := Random(DeathChance)+1;
-        if ChangeOrNot = 8 then
+        { this choice is the main feature of lichen }
+        ChangeOrNot := Random(ChanceToDie)+1;
+        if ChangeOrNot = ChanceToDie then
             screen[i] := screen[i]-1
     end;
 end;
