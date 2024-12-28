@@ -78,7 +78,7 @@ begin
     begin
         { too frequent growth isn't that beautiful }
         GrowOrNot := Random(128)+1;
-        if (GrowOrNot mod 128 = 0) and (Grow^.cycles <> 0) then
+        if (GrowOrNot = 128) and (Grow^.cycles <> 0) then
         begin
             { reminder: Growth() searches for LifeColor-1}
             screen[Grow^.pos] := LifeColor-1;
@@ -153,20 +153,20 @@ end;
 procedure DrawPlus(var screen: map; i: longword);
 begin
     { Left }
-	if (i+1 < AllPixels) and (screen[i+1] = DeathColor) then
-        screen[i+1] := LifeColor;
+    if (i+1 < AllPixels) and (screen[i+1] = DeathColor) then
+    	screen[i+1] := LifeColor;
 
     { Right }
     if (i-1 >= 6) and (screen[i-1] = DeathColor) then
-		screen[i-1] := LifeColor;
+	    screen[i-1] := LifeColor;
 
     { Upper pixel }
     if (i > MaxY) and (screen[i-MaxY] = DeathColor) then
-		screen[i-MaxY] := LifeColor;
+	    screen[i-MaxY] := LifeColor;
 
     { Bottom pixel }
     if (i+MaxY < AllPixels) and (screen[i+MaxY] = DeathColor) then
-		screen[i+MaxY] := LifeColor;
+	    screen[i+MaxY] := LifeColor;
 end;
 
 function CountNeighbors(var screen: map; i: longword): byte;
@@ -176,24 +176,24 @@ var
 begin
     { Do not forget to initialize }
     countme := 0;
-
-	{ Left }
-	if (i+1 < AllPixels) and (screen[i+1] = DeathColor) then
-		countme := countme + 1;
+    
+    { Left }
+    if (i+1 < AllPixels) and (screen[i+1] = DeathColor) then
+	    countme := countme + 1;
 
     { Right }
     if (i-1 >= 6) and (screen[i-1] = DeathColor) then
-		countme := countme + 1;
+	    countme := countme + 1;
 
     { Upper pixel }
     if (i > MaxY) and (screen[i-MaxY] = DeathColor) then
-		countme := countme + 1;
+	    countme := countme + 1;
 
     { Bottom pixel }
     if (i+MaxY < AllPixels) and (screen[i+MaxY] = DeathColor) then
-		countme := countme + 1;
-
-	{ Return count }
+	    countme := countme + 1;
+ 
+    { Return count }
 	CountNeighbors := countme
 end;
 
@@ -206,7 +206,7 @@ begin
     begin
         { this choose is the main feature of lichen }
         ChangeOrNot := Random(DeathChance)+1;
-        if ChangeOrNot mod 8 = 0 then
+        if ChangeOrNot = 8 then
             screen[i] := screen[i]-1
     end;
 end;
@@ -215,11 +215,11 @@ procedure Growth(var screen: map; i: longword);
 begin
     if screen[i] = LifeColor-1 then
     begin
-        { Two or less neighbors nearby? }
-		if CountNeighbors(screen, i) <= 2 then
-           	DrawPlus(screen, i)
-		else
-            DrawPixel(screen, i)
+    { Two or less neighbors are nearby? }
+	if CountNeighbors(screen, i) <= 2 then
+        DrawPlus(screen, i)
+	else
+        DrawPixel(screen, i)
     end;
 end;
 
@@ -303,17 +303,17 @@ begin
     {$IFDEF StatGrowth}
     InitGrowthSources(Grow);
     {$ENDIF}
-
-	while not keyPressed do
-	begin
-        {$IFDEF NoStatGrowth}
-        SetRandPos(screen);
-        {$ELSE}
-	    SetPos(screen, Grow);
-        {$ENDIF}
-		GrowthAndDeath(screen);
+    
+    while not keyPressed do
+    begin
+    	{$IFDEF NoStatGrowth}
+    	SetRandPos(screen);
+    	{$ELSE}
+    	SetPos(screen, Grow);
+    	{$ENDIF}
+      	GrowthAndDeath(screen);
         ShowMap(screen);
-	end;
+    end;
     {$IFDEF StatGrowth}
     DeallocSources(Grow)
     {$ENDIF}
@@ -322,15 +322,15 @@ end;
 procedure GiveShape(var screen: map);
 begin
     { size of the map in BYTES }
-	size_of_map := ImageSize(0, 0, GetMaxX, GetMaxY);
+    size_of_map := ImageSize(0, 0, GetMaxX, GetMaxY);
 
     { Make life map exist }
     getmem(screen, size_of_map);
     if ReturnNilIfGrowHeapFails then
         halt(2);
 
-	writeln('The required size for copying entire screen is ', size_of_map, ' bytes');
-	{ Copy entire screen in map }
+    writeln('The required size for copying entire screen is ', size_of_map, ' bytes');
+    { Copy entire screen in map }
     GetImage(0, 0, GetMaxX, GetMaxY, screen^)
 end;
 
